@@ -11,6 +11,7 @@ import com.springboot.insurance.model.Employee;
 import com.springboot.insurance.model.User;
 import com.springboot.insurance.repository.EmployeeRepository;
 import com.springboot.insurance.repository.UserRepository;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -66,5 +67,25 @@ public class EmployeeService {
                 .stream()
                 .map(EmployeeMapper :: convertEntityToDto)
                 .toList();
+    }
+
+    public void delete(long id) {
+        Employee employee = employeeRepository.findById(id)
+                .orElseThrow(()->new ResourceNotFoundException("Employee Id invalid"));
+
+        employee.setActive(false);
+
+        employeeRepository.save(employee);
+    }
+
+    public void update(long id, @Valid EmployeeRequestDto dto) {
+
+        Employee employee = employeeRepository.findById(id)
+                .orElseThrow(()->new ResourceNotFoundException("Employee Id invalid"));
+
+        employee.setName(dto.name());
+        employee.setEmployeeRole(dto.employeeRole());
+        employee.setActive(dto.isActive());
+
     }
 }

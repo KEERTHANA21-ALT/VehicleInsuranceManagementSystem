@@ -24,6 +24,8 @@ public class Payment {
 
     private double amount;
 
+    private boolean isActive = true;
+
     @Enumerated(EnumType.STRING)
     private PaymentMethod paymentMethod;
 

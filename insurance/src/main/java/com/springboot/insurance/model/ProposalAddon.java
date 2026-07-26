@@ -20,6 +20,8 @@ public class ProposalAddon {
 
     private double addonPrice;
 
+    private boolean isActive = true;
+
     @ManyToOne
     @JoinColumn(name = "proposal_id", nullable = false)
     private Proposal proposal;
@@ -28,10 +30,5 @@ public class ProposalAddon {
     @JoinColumn(name = "addon_id", nullable = false)
     private Addon addon;
 
-    public ProposalAddonResponseDto convertEntityToDto(ProposalAddon proposalAddon) {
-        ProposalAddonResponseDto dto = new ProposalAddonResponseDto(
-                proposalAddon.getAddonPrice()
-        );
-        return dto;
-    }
+
 }

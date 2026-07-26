@@ -84,9 +84,9 @@ public class PolicyHolderService {
     }
 
 
-    public void update(long id, @Valid PolicyHolderRequestDto policyHolderRequestDto) {
+    public void update(String username, @Valid PolicyHolderRequestDto policyHolderRequestDto) {
 
-        PolicyHolder policyHolderDb = policyHolderRepository.fetchById(id)
+        PolicyHolder policyHolderDb = policyHolderRepository.findByUserUsername(username)
                 .orElseThrow(()->new ResourceNotFoundException("PolicyHolder is invalid"));
 
         policyHolderDb.setName(policyHolderRequestDto.name());

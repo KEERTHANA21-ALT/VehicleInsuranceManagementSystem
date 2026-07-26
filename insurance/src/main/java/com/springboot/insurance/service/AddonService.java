@@ -23,6 +23,9 @@ public class AddonService {
 
     public void add(@Valid AddonRequestDto dto) {
         Addon addon = AddonMapper.convertDtoToEntity(dto);
+
+        addon.setActive(true);
+
         addonRepository.save(addon);
     }
 
@@ -42,33 +45,26 @@ public class AddonService {
                 .map(AddonMapper :: convertEntityToDto)
                 .toList();
     }
+
+    public void delete(long id) {
+        Addon addon = addonRepository.findById(id)
+                .orElseThrow(()->new ResourceNotFoundException("Addon Id invalid"));
+
+        addon.setActive(false);
+
+        addonRepository.save(addon);
+    }
+
+    public void update(long id, @Valid AddonRequestDto dto) {
+
+        Addon addon = addonRepository.findById(id)
+                .orElseThrow(()->new ResourceNotFoundException("Addon Id invalid"));
+
+        addon.setName(dto.name());
+        addon.setPrice(dto.price());
+        addon.setDescription(dto.description());
+
+    }
 }
 
 
-//@Entity
-//@Getter
-//@Setter
-//@NoArgsConstructor
-//@AllArgsConstructor
-//@ToString
-//public class ProposalAddon {
-//
-//
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    private Long id;
-//
-//
-//    private double addonPrice;
-//
-//
-//    @ManyToOne
-//    @JoinColumn(name = "proposal_id", nullable = false)
-//    private Proposal proposal;
-//
-//
-//    @ManyToOne
-//    @JoinColumn(name = "addon_id", nullable = false)
-//    private Addon addon;
-//
-//}

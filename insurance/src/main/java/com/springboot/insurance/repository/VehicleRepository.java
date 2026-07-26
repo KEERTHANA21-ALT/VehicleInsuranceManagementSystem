@@ -13,4 +13,6 @@ public interface VehicleRepository extends JpaRepository<Vehicle,Long> {
     // in repo wrapper cls works
     // naming the method in repo is imp
     List<Vehicle> findByPolicyHolderId(Long policyHolderId);
+
+    Optional<Vehicle> findByPolicyHolderUserUsername(String username);
 }

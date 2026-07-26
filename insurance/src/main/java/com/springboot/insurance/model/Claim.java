@@ -23,6 +23,8 @@ public class Claim {
 
     private double claimAmount;
 
+    private boolean isActive = true;
+
     @Enumerated(EnumType.STRING)
     private ClaimStatus claimStatus;
 
@@ -38,5 +40,6 @@ public class Claim {
     @ManyToOne
     @JoinColumn(name = "policy_id")
     private Policy policy;
+
 
 }

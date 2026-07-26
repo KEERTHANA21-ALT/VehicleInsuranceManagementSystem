@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -40,10 +41,13 @@ public class PolicyHolderController {
 
     }
 
-    @PutMapping("/update/{id}")
-    public void update(@PathVariable long id,@Valid @RequestBody PolicyHolderRequestDto policyHolderRequestDto){
-        policyHolderService.update(id, policyHolderRequestDto);
+    @PutMapping("/update")
+    public void update(Principal principal, @Valid @RequestBody PolicyHolderRequestDto policyHolderRequestDto){
+        String username = principal.getName();
+        policyHolderService.update(username, policyHolderRequestDto);
 
     }
+
+
 
 }

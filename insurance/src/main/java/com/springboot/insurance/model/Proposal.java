@@ -27,6 +27,8 @@ public class Proposal {
 
     private double discount;
 
+    private boolean isActive = true;
+
     @Enumerated(EnumType.STRING)
     private ProposalStatus proposalStatus;
 
@@ -48,7 +50,6 @@ public class Proposal {
     @ManyToOne
     @JoinColumn(name = "insurance_plan_id")
     private InsurancePlan insurancePlan;
-
 
 
 }

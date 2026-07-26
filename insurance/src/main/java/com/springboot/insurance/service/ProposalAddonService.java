@@ -22,7 +22,7 @@ public class ProposalAddonService {
     private final AddonRepository addonRepository;
 
 
-    public void add(Long proposalId, Long addonId){
+    public void add(Long proposalId, Long addonId, String username){
 
         // Fetch Proposal
         Proposal proposal = proposalRepository.findById(proposalId)
@@ -46,18 +46,28 @@ public class ProposalAddonService {
 
 
         // Update premium
-        proposal.setPremiumAmount(proposal.getPremiumAmount() + addon.getPrice()
-        );
+        proposal.setPremiumAmount(proposal.getPremiumAmount() + addon.getPrice());
 
+        proposalAddon.setActive(true);
 
         proposalRepository.save(proposal);
 
     }
 
-    public ProposalAddonResponseDto getById(Long proposalId,Long addonId) {
-        ProposalAddon proposalAddon = proposalAddonRepository.findByProposal_IdAndAddon_Id(proposalId,addonId)
+    public ProposalAddonResponseDto getById(Long proposalId,Long addonId,String username) {
+
+        ProposalAddon proposalAddon = proposalAddonRepository.findByProposal_IdAndAddon_IdAndProposal_PolicyHolder_User_Username(proposalId,addonId,username)
                 .orElseThrow(()->new ResourceNotFoundException("Proposal id Invalid"));
 
-        return proposalAddon.convertEntityToDto(proposalAddon);
+        return ProposalAddonMapper.convertEntityToDto(proposalAddon);
+    }
+
+    public void delete(long id) {
+        ProposalAddon proposalAddon = proposalAddonRepository.findById(id)
+                .orElseThrow(()->new ResourceNotFoundException("Proposal Id invalid"));
+
+        proposalAddon.setActive(false);
+
+        proposalAddonRepository.save(proposalAddon);
     }
 }

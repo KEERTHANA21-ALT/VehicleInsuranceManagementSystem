@@ -7,6 +7,7 @@ import com.springboot.insurance.exception.ResourceNotFoundException;
 import com.springboot.insurance.mapper.InsurancePlanMapper;
 import com.springboot.insurance.model.InsurancePlan;
 import com.springboot.insurance.repository.InsurancePlanRepository;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +23,8 @@ public class InsurancePlanService {
 
         // Step 1: Convert dto to Entity
         InsurancePlan insurancePlan = InsurancePlanMapper.convertDtoToEntity(dto);
+
+        insurancePlan.setActive(true);
 
         // Step 2: Save Entity in Db
         insurancePlanRepository.save(insurancePlan);
@@ -41,5 +44,27 @@ public class InsurancePlanService {
                 .stream()
                 .map(InsurancePlanMapper :: convertEntityToDto)
                 .toList();
+    }
+
+    public void delete(long id) {
+
+        InsurancePlan insurancePlan = insurancePlanRepository.findById(id)
+                .orElseThrow(()->new ResourceNotFoundException("Insurance Plan Id invalid"));
+
+        insurancePlan.setActive(false);
+
+        insurancePlanRepository.save(insurancePlan);
+    }
+
+    public void update(long id, @Valid InsurancePlanRequestDto dto) {
+
+        InsurancePlan insurancePlan = insurancePlanRepository.findById(id)
+                .orElseThrow(()->new ResourceNotFoundException("Insurance Plan Id invalid"));
+
+        insurancePlan.setPlanType(dto.planType());
+        insurancePlan.setBasePremium(dto.basePremium());
+        insurancePlan.setCoverageAmount(dto.coverageAmount());
+        insurancePlan.setInspectionRequired(dto.inspectionRequired());
+
     }
 }

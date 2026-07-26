@@ -37,10 +37,21 @@ public class ProposalController {
         return proposalService.getAll(username);
     }
 
+
+    @DeleteMapping("/delete/{id}")
+    public void delete(@PathVariable long id){
+        proposalService.delete(id);
+    }
+
     // the employee value while adding proposal is set to null becoz employee will be added by admin
     // once the proposal is created
     @PutMapping("/assign-employee/{proposalId}/{employeeId}")
     public void assignEmployee(@PathVariable long proposalId, @PathVariable long employeeId) {
         proposalService.assignEmployee(proposalId, employeeId);
+    }
+
+    @PutMapping("/update/{id}")
+    public void update(@PathVariable long id, @Valid @RequestBody ProposalRequestDto dto){
+        proposalService.update(id,dto);
     }
 }

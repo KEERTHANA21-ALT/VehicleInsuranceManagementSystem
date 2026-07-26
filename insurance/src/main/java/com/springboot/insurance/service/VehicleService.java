@@ -8,6 +8,7 @@ import com.springboot.insurance.model.PolicyHolder;
 import com.springboot.insurance.model.Vehicle;
 import com.springboot.insurance.repository.PolicyHolderRepository;
 import com.springboot.insurance.repository.VehicleRepository;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +33,8 @@ public class VehicleService {
         // Step 3: Attach policyHolder to vehicle
         vehicle.setPolicyHolder(policyHolder);
 
+        vehicle.setActive(true);
+
         // Step 4: Save vehicle in Db
         vehicleRepository.save(vehicle);
     }
@@ -51,5 +54,26 @@ public class VehicleService {
                 .stream()
                 .map(VehicleMapper :: convertEntityToDto)
                 .toList();
+    }
+
+    public void delete(long id) {
+
+        Vehicle vehicle = vehicleRepository.findById(id)
+                .orElseThrow(()-> new ResourceNotFoundException("Vehicle Id invalid"));
+
+        vehicle.setActive(false);
+
+        vehicleRepository.save(vehicle);
+    }
+
+    public void update(String username, @Valid VehicleRequestDto dto) {
+        Vehicle vehicle = vehicleRepository.findByPolicyHolderUserUsername(username)
+                .orElseThrow(()-> new ResourceNotFoundException("Vehicle is invalid"));
+
+        vehicle.setVehicleNumber(dto.vehicleNumber());
+        vehicle.setVehicleType(dto.vehicleType());
+        vehicle.setVehicleModel(dto.vehicleModel());
+        vehicle.setYear(dto.year());
+
     }
 }

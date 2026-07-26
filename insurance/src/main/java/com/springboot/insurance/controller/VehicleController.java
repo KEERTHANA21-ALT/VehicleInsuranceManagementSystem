@@ -43,4 +43,15 @@ public class VehicleController {
     public List<VehicleResponseDto> getByPolicyHolder(@PathVariable long policyHolderId){
         return vehicleService.getByPolicyHolder(policyHolderId);
     }
+
+    @DeleteMapping("/delete/{id}")
+    public void delete(@PathVariable long id){
+        vehicleService.delete(id);
+    }
+
+    @PutMapping("/update")
+    public void update(Principal principal, @Valid @RequestBody VehicleRequestDto dto){
+        String username = principal.getName();
+        vehicleService.update(username,dto);
+    }
 }

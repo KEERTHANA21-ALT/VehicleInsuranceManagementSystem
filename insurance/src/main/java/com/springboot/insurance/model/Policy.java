@@ -23,6 +23,8 @@ public class Policy {
 
     private LocalDate endDate;
 
+    private boolean isActive = true;
+
     @Enumerated(EnumType.STRING)
     private PolicyStatus policyStatus;
 

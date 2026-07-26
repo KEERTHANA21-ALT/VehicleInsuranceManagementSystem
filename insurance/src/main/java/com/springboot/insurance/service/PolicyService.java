@@ -33,6 +33,8 @@ public class PolicyService {
         // Step 3: Attach proposal id to policy
         policy.setProposal(proposal);
 
+        policy.setActive(true);
+
         // Step 4: Save policy in db
         policyRepository.save(policy);
     }
@@ -51,5 +53,22 @@ public class PolicyService {
                 .stream()
                 .map(PolicyMapper :: convertEntityToDto)
                 .toList();
+    }
+
+    public void delete(long id) {
+
+        Policy policy = policyRepository.findById(id)
+                .orElseThrow(()->new ResourceNotFoundException("Policy Id invalid"));
+        policy.setActive(false);
+        policyRepository.save(policy);
+    }
+
+    public void update(long id, @Valid PolicyRequestDto dto) {
+
+        Policy policy = policyRepository.findById(id)
+                .orElseThrow(()->new ResourceNotFoundException("Policy Id invalid"));
+
+        policy.setPolicyStatus(dto.policyStatus());
+
     }
 }

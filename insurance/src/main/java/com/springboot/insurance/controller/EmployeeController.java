@@ -44,4 +44,14 @@ public class EmployeeController {
     public List<EmployeeResponseDto> getByEmployeeRole(@RequestParam EmployeeRole employeeRole){
         return employeeService.getByEmployeeRole(employeeRole);
     }
+
+    @DeleteMapping("/delete/{id}")
+    public void delete(@PathVariable long id){
+        employeeService.delete(id);
+    }
+
+    @PutMapping("/update/{id}")
+    public void update(@PathVariable long id,@Valid @RequestBody EmployeeRequestDto dto){
+        employeeService.update(id,dto);
+    }
 }

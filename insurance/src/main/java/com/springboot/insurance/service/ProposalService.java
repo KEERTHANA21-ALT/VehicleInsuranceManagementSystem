@@ -6,6 +6,7 @@ import com.springboot.insurance.exception.ResourceNotFoundException;
 import com.springboot.insurance.mapper.ProposalMapper;
 import com.springboot.insurance.model.*;
 import com.springboot.insurance.repository.*;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -55,6 +56,8 @@ public class ProposalService {
         // Step 6: employee assigned later like surveyor all
         proposal.setEmployee(null);
 
+        proposal.setActive(true);
+
         // Step 7: Save in Db
         proposalRepository.save(proposal);
 
@@ -89,5 +92,23 @@ public class ProposalService {
         proposal.setEmployee(employee);
 
         proposalRepository.save(proposal);
+    }
+
+    public void delete(long id) {
+        Proposal proposal = proposalRepository.findById(id)
+                .orElseThrow(()->new ResourceNotFoundException("Proposal Id invalid"));
+        
+        proposal.setActive(false);
+
+        proposalRepository.save(proposal);
+    }
+
+    public void update(long id, @Valid ProposalRequestDto dto) {
+
+        Proposal proposal = proposalRepository.findById(id)
+                .orElseThrow(()->new ResourceNotFoundException("Proposal Id invalid"));
+
+        proposal.setProposalStatus(dto.proposalStatus());
+
     }
 }

@@ -34,5 +34,14 @@ public class InsurancePlanController {
         return insurancePlanService.getByPlanType(planType);
     }
 
+    @DeleteMapping("/delete/{id}")
+    public void delete(@PathVariable long id){
+        insurancePlanService.delete(id);
+    }
 
+    @PutMapping("/update/{id}")
+    public void update(@PathVariable long id, @Valid @RequestBody InsurancePlanRequestDto dto){
+        insurancePlanService.update(id,dto);
+
+    }
 }

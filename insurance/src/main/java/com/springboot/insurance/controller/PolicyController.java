@@ -35,4 +35,14 @@ public class PolicyController {
         String username = principal.getName();
         return policyService.getAll(username);
     }
+
+    @DeleteMapping("/delete/{id}")
+    public void delete(@PathVariable long id){
+        policyService.delete(id);
+    }
+
+    @PutMapping("/update/{id}")
+    public void update(@PathVariable long id,@Valid @RequestBody PolicyRequestDto dto){
+        policyService.update(id,dto);
+    }
 }

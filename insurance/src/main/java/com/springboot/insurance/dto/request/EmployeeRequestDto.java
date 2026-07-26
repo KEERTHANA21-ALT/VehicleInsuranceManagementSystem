@@ -18,7 +18,10 @@ public record EmployeeRequestDto(
 
         @NotBlank(message = "This field should not be Empty")
         @Size(min = 5, max=15 , message = "Password should've min 5 and max 15 chars")
-        String password
+        String password,
+
+        @NotNull
+        Boolean isActive
 
 ) {
 }

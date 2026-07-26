@@ -24,4 +24,8 @@ public class Addon {
     private double price;
 
     private String description;
+
+    private boolean isActive = true;
+
+
 }

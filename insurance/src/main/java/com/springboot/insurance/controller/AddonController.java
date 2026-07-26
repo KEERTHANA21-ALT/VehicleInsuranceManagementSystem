@@ -32,4 +32,14 @@ public class AddonController {
     public List<AddonResponseDto> getAll(@RequestParam Integer page, @RequestParam Integer size){
         return addonService.getAll(page,size);
     }
+
+    @DeleteMapping("/delete/{id}")
+    public void delete(@PathVariable long id){
+        addonService.delete(id);
+    }
+
+    @PutMapping("/update/{id}")
+    public void update(@PathVariable long id, @Valid @RequestBody AddonRequestDto dto){
+        addonService.update(id,dto);
+    }
 }

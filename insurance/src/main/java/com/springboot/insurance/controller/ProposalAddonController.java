@@ -6,6 +6,8 @@ import com.springboot.insurance.service.ProposalAddonService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
+
 @RestController
 @RequestMapping("/api/proposal-addon")
 @RequiredArgsConstructor
@@ -15,13 +17,24 @@ public class ProposalAddonController {
 
 
     @PostMapping("/add/{proposalId}/{addonId}")
-    public void add(@PathVariable Long proposalId, @PathVariable Long addonId){
-        proposalAddonService.add(proposalId, addonId);
+    public void add(@PathVariable Long proposalId,
+                    @PathVariable Long addonId,
+                    Principal principal) {
+
+        String username = principal.getName();
+        proposalAddonService.add(proposalId, addonId, username);
     }
 
     @GetMapping("/get-proposalId/{proposalId}/addonId/{addonId}")
     public ProposalAddonResponseDto getById(@PathVariable Long proposalId,
-                                                    @PathVariable Long addonId){
-        return proposalAddonService.getById(proposalId,addonId);
+                                            @PathVariable Long addonId,
+                                            Principal principal){
+        String username = principal.getName();
+        return proposalAddonService.getById(proposalId, addonId, username);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public void delete(@PathVariable long id){
+        proposalAddonService.delete(id);
     }
 }

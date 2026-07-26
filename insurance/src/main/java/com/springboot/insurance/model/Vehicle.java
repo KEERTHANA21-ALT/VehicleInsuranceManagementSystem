@@ -28,8 +28,11 @@ public class Vehicle {
 
     private int year;
 
+    private boolean isActive = true;
+
     @ManyToOne
     @JoinColumn(name = "policy_holder_id", nullable = false )
     private PolicyHolder policyHolder;
+
 
 }
