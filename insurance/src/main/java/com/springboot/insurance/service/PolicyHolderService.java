@@ -58,6 +58,9 @@ public class PolicyHolderService {
 
     public List<PolicyHolderResponseDto> getAll(Integer page, Integer size) {
 
+        if(size == 0)
+            throw new RuntimeException("Size has to be more than 0");
+
         Pageable pageable = PageRequest.of(page,size);
         List<PolicyHolder> list = policyHolderRepository.fetchAll(pageable).getContent();
         return list

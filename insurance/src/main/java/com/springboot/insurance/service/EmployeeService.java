@@ -87,5 +87,7 @@ public class EmployeeService {
         employee.setEmployeeRole(dto.employeeRole());
         employee.setActive(dto.isActive());
 
+        employeeRepository.save(employee);
+
     }
 }

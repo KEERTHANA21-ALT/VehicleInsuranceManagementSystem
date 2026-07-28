@@ -41,7 +41,7 @@ public class EmployeeController {
 
     // RequestParam: localhost:8080/api/employee/get-byEmployeeRole/employeeRole?employeeRole=CLAIM_MANAGER
     @GetMapping("/get-byEmployeeRole/{employeeRole}")
-    public List<EmployeeResponseDto> getByEmployeeRole(@RequestParam EmployeeRole employeeRole){
+    public List<EmployeeResponseDto> getByEmployeeRole(@PathVariable  EmployeeRole employeeRole){
         return employeeService.getByEmployeeRole(employeeRole);
     }
 

@@ -19,7 +19,7 @@ public class ClaimController {
     private final ClaimService claimService;
 
     @PostMapping("/add")
-    public void add(Principal principal, @RequestBody ClaimRequestDto dto){
+    public void add(Principal principal,@Valid @RequestBody ClaimRequestDto dto){
         String username = principal.getName();
         claimService.add(username,dto);
 

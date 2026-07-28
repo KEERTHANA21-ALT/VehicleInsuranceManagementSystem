@@ -79,5 +79,7 @@ public class PaymentService {
                 .orElseThrow(()->new ResourceNotFoundException("Payment Id invalid"));
 
         payment.setPaymentStatus(paymentStatus);
+
+        paymentRepository.save(payment);
     }
 }

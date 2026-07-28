@@ -72,5 +72,7 @@ public class ClaimService {
                 .orElseThrow(()->new ResourceNotFoundException("Claim Id invalid"));
 
         claim.setClaimStatus(dto.claimStatus());
+
+        claimRepository.save(claim);
     }
 }

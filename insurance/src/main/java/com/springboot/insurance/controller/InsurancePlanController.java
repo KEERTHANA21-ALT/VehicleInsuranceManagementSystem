@@ -30,7 +30,7 @@ public class InsurancePlanController {
     }
 
     @GetMapping("/get-ByPlanType/{planType}")
-    public List<InsurancePlanResponseDto> getByPlanType(@RequestParam PlanType planType){
+    public List<InsurancePlanResponseDto> getByPlanType(@PathVariable PlanType planType){
         return insurancePlanService.getByPlanType(planType);
     }
 

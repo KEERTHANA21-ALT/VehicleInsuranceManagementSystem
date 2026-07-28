@@ -75,5 +75,7 @@ public class VehicleService {
         vehicle.setVehicleModel(dto.vehicleModel());
         vehicle.setYear(dto.year());
 
+        vehicleRepository.save(vehicle);
+
     }
 }

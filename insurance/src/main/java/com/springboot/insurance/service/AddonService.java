@@ -64,6 +64,7 @@ public class AddonService {
         addon.setPrice(dto.price());
         addon.setDescription(dto.description());
 
+        addonRepository.save(addon);
     }
 }
 

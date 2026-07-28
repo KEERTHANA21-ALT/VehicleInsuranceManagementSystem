@@ -110,5 +110,7 @@ public class ProposalService {
 
         proposal.setProposalStatus(dto.proposalStatus());
 
+        proposalRepository.save(proposal);
+
     }
 }

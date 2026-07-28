@@ -70,5 +70,7 @@ public class PolicyService {
 
         policy.setPolicyStatus(dto.policyStatus());
 
+        policyRepository.save(policy);
+
     }
 }

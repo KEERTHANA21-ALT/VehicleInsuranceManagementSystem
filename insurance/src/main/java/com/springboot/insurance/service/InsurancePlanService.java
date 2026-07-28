@@ -66,5 +66,7 @@ public class InsurancePlanService {
         insurancePlan.setCoverageAmount(dto.coverageAmount());
         insurancePlan.setInspectionRequired(dto.inspectionRequired());
 
+        insurancePlanRepository.save(insurancePlan);
+
     }
 }
