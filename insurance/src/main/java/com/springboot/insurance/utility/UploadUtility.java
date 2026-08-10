@@ -11,12 +11,12 @@ import java.util.List;
 public class UploadUtility {
     // This method checks if the image extension given is allowed or not
     public void validateImage(MultipartFile file) throws FileUploadException {
-        // System.out.println(file);
+
         if(file == null || file.isEmpty())
             throw new FileUploadException("Image not given");
 
         String imageName = file.getOriginalFilename();
-        // System.out.println(imageName);
+
         List<String> allowedList = List.of("png","jpg","jpeg");
         // image name : 836.jpg
         String[] arr = imageName.split("\\.");
