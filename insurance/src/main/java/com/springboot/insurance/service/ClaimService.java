@@ -25,6 +25,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -210,7 +211,15 @@ public class ClaimService {
 
         Files.createDirectories(uploadDirectory);
 
-        Path filePath = uploadDirectory.resolve(Objects.requireNonNull(imageFile.getOriginalFilename()));
+       // Path filePath = uploadDirectory.resolve(Objects.requireNonNull(imageFile.getOriginalFilename()));
+
+        String originalFileName = Objects.requireNonNull(imageFile.getOriginalFilename());
+
+        String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
+
+        String fileName = UUID.randomUUID().toString() + extension;
+
+        Path filePath = uploadDirectory.resolve(fileName);
 
         Files.copy(imageFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 

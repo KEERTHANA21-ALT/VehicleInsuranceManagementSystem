@@ -22,6 +22,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -105,7 +106,14 @@ public class VehicleService {
         Path uPathDir =  Paths.get(uploadPath);
 
         // Resolve the file into a path -- target
-        Path filePath =  uPathDir.resolve(Objects.requireNonNull(imageFile.getOriginalFilename()));
+//        Path filePath =  uPathDir.resolve(Objects.requireNonNull(imageFile.getOriginalFilename()));
+        String originalFileName = Objects.requireNonNull(imageFile.getOriginalFilename());
+
+        String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
+
+        String fileName = UUID.randomUUID().toString() + extension;
+
+        Path filePath = uPathDir.resolve(fileName);
 
         // upload the file
         Files.copy(imageFile.getInputStream(), filePath , StandardCopyOption.REPLACE_EXISTING);
