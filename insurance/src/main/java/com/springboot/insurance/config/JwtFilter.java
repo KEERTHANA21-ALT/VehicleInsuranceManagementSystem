@@ -57,6 +57,8 @@ public class JwtFilter extends OncePerRequestFilter {
             // Fetch user details by username coming out of token
             UserDetails userDetails = userSecurityService.loadUserByUsername(username);
 
+
+
             if (jwtUtility.validateToken(jwt, userDetails.getUsername())) { // if validation is successful
                 // from here on we just pass on the user details to spring's filter
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =

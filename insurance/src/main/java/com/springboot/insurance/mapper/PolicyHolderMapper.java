@@ -23,10 +23,15 @@ public class PolicyHolderMapper {
     public static PolicyHolderResponseDto convertEntityToDto(PolicyHolder policyHolder){
 
         PolicyHolderResponseDto policyHolderResponseDto = new PolicyHolderResponseDto(
+
+                policyHolder.getId(),
                 policyHolder.getName(),
+                policyHolder.getUser().getUsername(),
                 policyHolder.getDob(),
                 policyHolder.getPhoneNumber(),
-                policyHolder.getAddress()
+                policyHolder.getAddress(),
+                policyHolder.isActive(),
+                policyHolder.isDeletionRequested()
 
 
         );

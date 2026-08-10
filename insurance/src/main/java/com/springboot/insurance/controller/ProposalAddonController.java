@@ -11,6 +11,7 @@ import java.security.Principal;
 @RestController
 @RequestMapping("/api/proposal-addon")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:5173")
 public class ProposalAddonController {
 
     private final ProposalAddonService proposalAddonService;

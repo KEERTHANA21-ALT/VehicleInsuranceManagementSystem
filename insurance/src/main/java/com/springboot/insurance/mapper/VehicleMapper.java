@@ -22,10 +22,12 @@ public class VehicleMapper {
     public static VehicleResponseDto convertEntityToDto(Vehicle vehicle) {
 
         VehicleResponseDto vehicleResponseDto = new VehicleResponseDto(
+                vehicle.getId(),
                 vehicle.getVehicleNumber(),
                 vehicle.getVehicleType(),
                 vehicle.getVehicleModel(),
-                vehicle.getYear()
+                vehicle.getYear(),
+                vehicle.getImageUrl()
         );
         return vehicleResponseDto;
     }

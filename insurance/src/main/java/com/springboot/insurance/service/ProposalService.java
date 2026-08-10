@@ -1,7 +1,12 @@
 package com.springboot.insurance.service;
 
 import com.springboot.insurance.dto.request.ProposalRequestDto;
+import com.springboot.insurance.dto.request.ProposalStatusRequestDto;
 import com.springboot.insurance.dto.response.ProposalResponseDto;
+import com.springboot.insurance.dto.response.ProposalResponseForAdminDto;
+import com.springboot.insurance.dto.response.ProposalResponseForEmployeeDto;
+import com.springboot.insurance.dto.response.ProposalResponseForPolicyDto;
+import com.springboot.insurance.enums.ProposalStatus;
 import com.springboot.insurance.exception.ResourceNotFoundException;
 import com.springboot.insurance.mapper.ProposalMapper;
 import com.springboot.insurance.model.*;
@@ -11,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -24,43 +30,57 @@ public class ProposalService {
     private final InsurancePlanRepository insurancePlanRepository;
     private final UserRepository userRepository;
 
-    public void add(String username,ProposalRequestDto dto) {
+    public ProposalResponseDto add(String username, ProposalRequestDto dto) {
 
-//         Step 1: Fetch policyHolderDetails
         PolicyHolder policyHolder = policyHolderRepository.findByUserUsername(username)
-                .orElseThrow(()->new ResourceNotFoundException("PolicyHolder Id is invalid"));
+                .orElseThrow(() -> new ResourceNotFoundException("Policy Holder not found"));
 
-//         Step 2: Fetch VehicleDetails
         Vehicle vehicle = vehicleRepository.findById(dto.vehicleId())
-                .orElseThrow(()->new ResourceNotFoundException("Vehicle Id is invalid"));
+                .orElseThrow(() -> new ResourceNotFoundException("Vehicle not found"));
 
-//         Step 3: Fetch InsurancePlanDetails
-        InsurancePlan insurancePlan =  insurancePlanRepository.findById(dto.insurancePlanId())
-                .orElseThrow(()->new ResourceNotFoundException("InsurancePlan Id is invalid"));
+        InsurancePlan insurancePlan = insurancePlanRepository.findById(dto.insurancePlanId())
+                .orElseThrow(() -> new ResourceNotFoundException("Insurance Plan not found"));
 
-        // Step 4: Fetch proposal details from dto
-        Proposal proposal = ProposalMapper.convertDtoToEntity(
-                dto.basePremium(),
-                dto.discount(),
-                dto.proposalStatus()
-        );
+        // Check whether this vehicle already has a proposal
+        Proposal exists = proposalRepository.findByVehicleIdAndPolicyHolderIdAndProposalStatusNot(
+                                dto.vehicleId(),
+                                policyHolder.getId(),
+                                ProposalStatus.REJECTED
+                        )
+                        .orElse(null);
 
-        double premiumAmount = proposal.getBasePremium() - proposal.getDiscount();
-        proposal.setPremiumAmount(premiumAmount);
+        if (exists != null) {
+            throw new ResourceNotFoundException("A proposal already exists for this vehicle");
+        }
 
-        // Step 5: Attach values
+
+        Proposal proposal = new Proposal();
+
         proposal.setPolicyHolder(policyHolder);
         proposal.setVehicle(vehicle);
         proposal.setInsurancePlan(insurancePlan);
 
-        // Step 6: employee assigned later like surveyor all
-        proposal.setEmployee(null);
+        // Base Premium from Insurance Plan
+        double basePremium = insurancePlan.getBasePremium();
+
+        // Discount calculated from Insurance Plan
+        double discount = (basePremium * insurancePlan.getDiscountPercentage()) / 100;
+
+        // Final Premium
+        double premiumAmount = basePremium - discount;
+
+        proposal.setBasePremium(basePremium);
+        proposal.setDiscount(discount);
+        proposal.setPremiumAmount(premiumAmount);
+
+        proposal.setProposalStatus(ProposalStatus.INSPECTION_PENDING);
 
         proposal.setActive(true);
+        proposal.setEmployee(null);
 
-        // Step 7: Save in Db
-        proposalRepository.save(proposal);
+        Proposal savedProposal = proposalRepository.save(proposal);
 
+        return ProposalMapper.convertEntityToDto(savedProposal);
     }
 
     public ProposalResponseDto getById(long proposalId) {
@@ -103,7 +123,7 @@ public class ProposalService {
         proposalRepository.save(proposal);
     }
 
-    public void update(long id, @Valid ProposalRequestDto dto) {
+    public void update(long id, @Valid ProposalStatusRequestDto dto) {
 
         Proposal proposal = proposalRepository.findById(id)
                 .orElseThrow(()->new ResourceNotFoundException("Proposal Id invalid"));
@@ -111,6 +131,57 @@ public class ProposalService {
         proposal.setProposalStatus(dto.proposalStatus());
 
         proposalRepository.save(proposal);
+
+    }
+
+    public List<ProposalResponseForAdminDto> getAllForAdmin() {
+
+        List<Proposal> list = proposalRepository.findAll();
+        return list
+                .stream()
+                .map(ProposalMapper :: convertEntityToDtoForAdmin)
+                .toList();
+    }
+
+    public List<ProposalResponseForAdminDto> getEmployeeProposals(String username) {
+
+        Employee employee = employeeRepository.findByUserUsername(username)
+                        .orElseThrow(()-> new RuntimeException("Employee not found"));
+
+
+        List<Proposal> proposals = proposalRepository.findByEmployeeId(employee.getId());
+
+
+        return proposals
+                .stream()
+                .map(ProposalMapper::convertEntityToDtoForAdmin)
+                .toList();
+    }
+
+
+    public List<ProposalResponseForEmployeeDto> getApprovedProposals(String username) {
+
+        Employee employee = employeeRepository.findAllByUserUsername(username);
+
+        List<Proposal> list = proposalRepository.findByEmployeeAndProposalStatus(employee, ProposalStatus.APPROVED);
+
+        return list
+                .stream()
+                .map(ProposalMapper :: convertEntityToDtoForEmployee)
+                .toList();
+
+
+
+
+    }
+
+    public ProposalResponseForPolicyDto getByIdForPolicy(long proposalId) {
+
+        Proposal proposal = proposalRepository.findById(proposalId)
+                .orElseThrow(()-> new ResourceNotFoundException("Proposal Id is invalid"));
+
+        return ProposalMapper.convertEntityToDtoForPolicy(proposal);
+
 
     }
 }

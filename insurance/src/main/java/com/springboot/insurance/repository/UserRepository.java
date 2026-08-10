@@ -1,6 +1,7 @@
 package com.springboot.insurance.repository;
 
 import com.springboot.insurance.model.User;
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -16,4 +17,5 @@ public interface UserRepository extends JpaRepository<User,Long> {
     Optional<User> loadUserByUsername(String username);
 
 
+    Boolean existsByUsername(@NotBlank(message = "Username should not be empty") String username);
 }

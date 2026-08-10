@@ -15,6 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/employee")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:5173")
 public class EmployeeController {
 
     private final EmployeeService employeeService;
@@ -45,13 +46,24 @@ public class EmployeeController {
         return employeeService.getByEmployeeRole(employeeRole);
     }
 
-    @DeleteMapping("/delete/{id}")
+    // this is for toggle status in frontend
+    @PutMapping("/delete/{id}")
     public void delete(@PathVariable long id){
         employeeService.delete(id);
+    }
+
+    @DeleteMapping("/deleteId/{id}")
+    public void deleteId(@PathVariable long id){
+        employeeService.deleteId(id);
     }
 
     @PutMapping("/update/{id}")
     public void update(@PathVariable long id,@Valid @RequestBody EmployeeRequestDto dto){
         employeeService.update(id,dto);
+    }
+
+    @GetMapping("/get-all")
+    public List<EmployeeResponseDto> getAll(){
+        return employeeService.getAll();
     }
 }

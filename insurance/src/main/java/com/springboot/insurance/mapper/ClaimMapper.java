@@ -7,26 +7,33 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ClaimMapper {
+
     public static Claim convertDtoToEntity(ClaimRequestDto dto) {
 
         Claim claim = new Claim();
-        claim.setClaimAmount(dto.claimAmount());
-        claim.setClaimStatus(dto.claimStatus());
+
+
         claim.setClaimReason(dto.claimReason());
         claim.setClaimRemarks(dto.claimRemarks());
+
 
         return claim;
     }
 
+
     public static ClaimResponseDto convertEntityToDto(Claim claim) {
 
-        ClaimResponseDto claimResponseDto = new ClaimResponseDto(
+        return new ClaimResponseDto(
+                claim.getId(),
                 claim.getClaimAmount(),
                 claim.getClaimStatus(),
                 claim.getClaimDate(),
                 claim.getClaimReason(),
-                claim.getClaimRemarks()
+                claim.getClaimRemarks(),
+                claim.getPolicy().getId(),
+                claim.getPolicy().getPolicyNumber(),
+                claim.getPolicy().getProposal().getVehicle().getVehicleNumber(),
+                claim.getImageUrl()
         );
-        return claimResponseDto;
     }
 }

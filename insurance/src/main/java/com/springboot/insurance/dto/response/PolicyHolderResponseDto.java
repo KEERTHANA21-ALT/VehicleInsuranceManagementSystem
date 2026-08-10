@@ -4,9 +4,13 @@ import java.time.LocalDate;
 
 public record PolicyHolderResponseDto(
 
+        Long id,
         String name,
+        String username,
         LocalDate dob,
         String phoneNumber,
-        String address
+        String address,
+        Boolean active,
+        Boolean deletionRequested
 ) {
 }

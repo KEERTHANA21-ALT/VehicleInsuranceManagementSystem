@@ -6,5 +6,7 @@ public enum ProposalStatus {
     UNDER_REVIEW,
     QUOTE_GENERATED,
     APPROVED,
-    REJECTED
+    REJECTED,
+    PAYMENT_PENDING,
+    POLICY_ISSUED
 }

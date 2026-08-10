@@ -62,7 +62,7 @@ public class PolicyHolderService {
             throw new RuntimeException("Size has to be more than 0");
 
         Pageable pageable = PageRequest.of(page,size);
-        List<PolicyHolder> list = policyHolderRepository.fetchAll(pageable).getContent();
+        List<PolicyHolder> list = policyHolderRepository.findAll(pageable).getContent();
         return list
                 .stream()
                 .map(PolicyHolderMapper :: convertEntityToDto)
@@ -79,10 +79,24 @@ public class PolicyHolderService {
     }
 
     public void delete(long id) {
-        PolicyHolder policyHolder = policyHolderRepository.fetchById(id)
+        PolicyHolder policyHolder = policyHolderRepository.findById(id)
                 .orElseThrow(()->new ResourceNotFoundException("PolicyHolder is invalid"));
 
         policyHolder.setActive(false);
+
+        policyHolder.setDeletionRequested(false);
+        // Prevent the customer from logging in
+        User user = policyHolder.getUser();
+
+
+
+        if (user != null) {
+            user.setActivated(false);
+            userRepository.save(user);
+        }
+
+
+
         policyHolderRepository.save(policyHolder);
     }
 
@@ -98,6 +112,64 @@ public class PolicyHolderService {
         policyHolderDb.setAddress(policyHolderRequestDto.address());
 
         policyHolderRepository.save(policyHolderDb);
+
+    }
+
+    public void signup(@Valid PolicyHolderRequestDto dto) {
+
+        // Check username exists
+        if(userRepository.existsByUsername(dto.username())) {
+            throw new RuntimeException("Username already exists");
+        }
+
+
+        // Step 1: Fetch user details from dto and save in DB
+        User user = UserMapper.convertDtoToEntity(
+                dto.username(),
+                dto.password(),
+                Role.POLICY_HOLDER
+        );
+
+        // encode the password
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        user.setActivated(true);
+
+        userRepository.save(user);
+
+        // Step 2: Fetch policyHolder details from dto
+        PolicyHolder policyHolder = PolicyHolderMapper.convertDtoToEntity(dto);
+
+        // Step 3: Attach user to policyHolder
+        policyHolder.setUser(user);
+
+        // Step 4: Save policyHolder in Db
+        policyHolderRepository.save(policyHolder);
+    }
+
+    public PolicyHolderResponseDto policyHolderProfile(String username) {
+        PolicyHolder policyHolder = policyHolderRepository.findByUserUsername(username)
+                .orElseThrow(()->new ResourceNotFoundException("Invalid user profile"));
+
+        return PolicyHolderMapper.convertEntityToDto(policyHolder);
+    }
+
+
+    public void requestDeletion(String username) {
+        PolicyHolder policyHolder = policyHolderRepository.findByUserUsername(username)
+                .orElseThrow(()->new ResourceNotFoundException("Invalid user profile"));
+
+        policyHolder.setDeletionRequested(true);
+        policyHolderRepository.save(policyHolder);
+    }
+
+    public List<PolicyHolderResponseDto> getDeletionRequests() {
+        List<PolicyHolder> list = policyHolderRepository.findByDeletionRequestedTrueOrActiveFalse();
+
+        return list
+                .stream()
+                .map(PolicyHolderMapper :: convertEntityToDto)
+                .toList();
 
     }
 }

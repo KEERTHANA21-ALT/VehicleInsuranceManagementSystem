@@ -5,10 +5,18 @@ import com.springboot.insurance.enums.ClaimStatus;
 import java.time.Instant;
 
 public record ClaimResponseDto(
-        double claimAmount,
+
+        Long id,
+        Double claimAmount,
         ClaimStatus claimStatus,
         Instant claimDate,
         String claimReason,
-        String claimRemarks
+        String claimRemarks,
+        Long policyId,
+        String policyNumber,
+        String vehicleNumber,
+        String imageUrl
+
+
 ) {
 }

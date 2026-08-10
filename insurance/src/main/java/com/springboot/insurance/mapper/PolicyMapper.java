@@ -23,10 +23,18 @@ public class PolicyMapper {
     public static PolicyResponseDto convertEntityToDto(Policy policy) {
 
         PolicyResponseDto policyResponseDto = new PolicyResponseDto(
+                policy.getId(),
+                policy.getProposal().getPolicyHolder().getName(),
+                policy.getProposal().getVehicle().getVehicleNumber(),
+                policy.getProposal().getInsurancePlan().getPlanType(),
+                policy.getProposal().getPremiumAmount(),
+                policy.getProposal().getInsurancePlan().getCoverageAmount(),
+                policy.getPolicyStatus(),
+                policy.getPolicyNumber(),
                 policy.getStartDate(),
                 policy.getEndDate(),
-                policy.getPolicyStatus(),
-                policy.getPolicyNumber()
+                policy.isActive()
+
         );
         return policyResponseDto;
     }

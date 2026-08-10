@@ -11,4 +11,8 @@ public interface PolicyRepository extends JpaRepository<Policy,Long> {
     Optional<Policy> findByProposalPolicyHolderUserUsername(String username);
 
     List<Policy> findAllByProposalPolicyHolderUserUsername(String username);
+
+    List<Policy> findAllByProposalEmployeeUserUsername(String username);
+
+    Optional<Policy> findByIdAndProposalPolicyHolderUserUsername(long id, String username);
 }

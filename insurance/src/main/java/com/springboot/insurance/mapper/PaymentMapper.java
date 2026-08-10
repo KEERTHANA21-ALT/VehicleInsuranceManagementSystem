@@ -20,6 +20,7 @@ public class PaymentMapper {
     public static PaymentResponseDto convertEntityToDto(Payment payment) {
 
         PaymentResponseDto paymentResponseDto = new PaymentResponseDto(
+                payment.getId(),
                 payment.getAmount(),
                 payment.getPaymentMethod(),
                 payment.getPaymentDate(),

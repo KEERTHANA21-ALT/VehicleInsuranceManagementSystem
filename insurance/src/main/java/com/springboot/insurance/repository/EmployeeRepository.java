@@ -3,6 +3,7 @@ package com.springboot.insurance.repository;
 import com.springboot.insurance.enums.EmployeeRole;
 import com.springboot.insurance.enums.Role;
 import com.springboot.insurance.model.Employee;
+import com.springboot.insurance.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -19,4 +20,10 @@ public interface EmployeeRepository extends JpaRepository<Employee,Long> {
     Optional<Employee> fetchById(long id);
 
     List<Employee> getByEmployeeRole(EmployeeRole employeeRole);
+
+    Optional<Employee> findByUserUsername(String username);
+
+    Employee findAllByUserUsername(String username);
+
+    Optional<Employee> findByUser(User user);
 }

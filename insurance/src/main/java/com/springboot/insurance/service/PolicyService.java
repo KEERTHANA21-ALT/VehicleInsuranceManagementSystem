@@ -30,6 +30,9 @@ public class PolicyService {
         // Step 2: Convert dto to Entity
         Policy policy = PolicyMapper.convertDtoToEntity(dto);
 
+        // update proposal status
+        proposal.setPolicyCreated(true);
+
         // Step 3: Attach proposal id to policy
         policy.setProposal(proposal);
 
@@ -39,8 +42,8 @@ public class PolicyService {
         policyRepository.save(policy);
     }
 
-    public PolicyResponseDto getById(String username) {
-        Policy policy = policyRepository.findByProposalPolicyHolderUserUsername(username)
+    public PolicyResponseDto getById(long id,String username) {
+        Policy policy = policyRepository.findByIdAndProposalPolicyHolderUserUsername(id,username)
                 .orElseThrow(()-> new ResourceNotFoundException("Policy not Invalid"));
 
         return PolicyMapper.convertEntityToDto(policy);
@@ -72,5 +75,14 @@ public class PolicyService {
 
         policyRepository.save(policy);
 
+    }
+
+    public List<PolicyResponseDto> getAllByEmployee(String username) {
+        List<Policy> list = policyRepository.findAllByProposalEmployeeUserUsername(username);
+
+        return list
+                .stream()
+                .map(PolicyMapper :: convertEntityToDto)
+                .toList();
     }
 }

@@ -2,7 +2,6 @@ package com.springboot.insurance.config;
 
 
 import com.springboot.insurance.service.UserSecurityService;
-import com.springboot.insurance.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,49 +31,84 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(authorize -> authorize
 
+                        // this is done becoz the post api in frontend will still give cors error
+                        // the get api can work without it but not the post
+                        // it is called as preFlight
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .requestMatchers("/api/auth/user-details").authenticated()
+
+                        // profile api
+                        .requestMatchers("/api/policyHolder/profile").hasAuthority("POLICY_HOLDER")
+
+                        // image upload api
+                        .requestMatchers(HttpMethod.POST,"/api/vehicle/image/upload/{vehicleId}").hasAuthority("POLICY_HOLDER")
+                        .requestMatchers("/api/vehicle/image/**").permitAll()
+                        .requestMatchers("/images/**").permitAll()   // <-- ADD THIS
+
+
                         // InsurancePlan Apis
                         .requestMatchers(HttpMethod.POST,"/api/insurancePlan/add").hasAuthority("ADMIN")
                         .requestMatchers("/api/insurancePlan/get-one/{id}").permitAll()
+                        .requestMatchers("/api/insurancePlan/get-all").permitAll()
                         .requestMatchers("/api/insurancePlan/get-ByPlanType/{planType}").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/api/insurancePlan/update/{id}").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.DELETE,"/api/insurancePlan/delete/{id}").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.PUT,"/api/insurancePlan/toggle/{id}").hasAuthority("ADMIN")
 
                         // Vehicle apis
                         .requestMatchers(HttpMethod.POST,"/api/vehicle/add").hasAuthority("POLICY_HOLDER")
                         .requestMatchers("/api/vehicle/get-ByVehicleNumber/{vehicleNumber}").hasAnyAuthority("ADMIN","EMPLOYEE")
                         .requestMatchers("/api/vehicle/get-ByPolicyHolderId/{policyHolderId}").hasAnyAuthority("ADMIN","EMPLOYEE")
+                        .requestMatchers("/api/vehicle/get-myVehicles").hasAuthority("POLICY_HOLDER")
+                        .requestMatchers("/api/vehicle/{id}").hasAuthority("POLICY_HOLDER")
                         .requestMatchers(HttpMethod.PUT, "/api/vehicle/update").hasAuthority("POLICY_HOLDER")
                         .requestMatchers(HttpMethod.DELETE,"/api/vehicle/delete/{id}").hasAuthority("ADMIN")
 
                         // Proposal apis
-                        .requestMatchers(HttpMethod.POST,"/api/proposal/add").hasAuthority("POLICY_HOLDER")
+                        .requestMatchers(HttpMethod.POST,"/api/proposal/add").permitAll()
                         .requestMatchers("/api/proposal/get-one/{proposalId}").hasAnyAuthority("EMPLOYEE", "ADMIN")
                         .requestMatchers("/api/proposal/get-myProposals").hasAnyAuthority("POLICY_HOLDER", "EMPLOYEE", "ADMIN")
+                        .requestMatchers("/api/proposal/get-all").hasAnyAuthority( "ADMIN")
+                        .requestMatchers("/api/proposal/get-approved").hasAuthority("EMPLOYEE")
+                        .requestMatchers("/api/proposal/get-one/employee/{proposalId}").hasAuthority("EMPLOYEE")
                         .requestMatchers(HttpMethod.DELETE,"/api/proposal/delete/{id}").hasAuthority("ADMIN")
+                        .requestMatchers("/api/proposal/get-employeeProposals").hasAuthority("EMPLOYEE")
                         .requestMatchers(HttpMethod.PUT, "/api/proposal/assign-employee/{proposalId}/{employeeId}").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/proposal/update/{id}").hasAnyAuthority("EMPLOYEE","ADMIN")
 
 
                         // Payment Apis
-                        .requestMatchers(HttpMethod.POST,"/api/payment/add").hasAuthority("POLICY_HOLDER")
+                        .requestMatchers(HttpMethod.POST,"/api/payment/add/{proposalId}").hasAuthority("POLICY_HOLDER")
                         .requestMatchers("/api/payment/get-one").hasAnyAuthority("POLICY_HOLDER", "EMPLOYEE", "ADMIN")
-                        .requestMatchers("/api/payment/get-ByProposalId/{proposalId}").hasAnyAuthority("EMPLOYEE", "ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/payment/update/{id}").hasAnyAuthority("ADMIN","EMPLOYEE")
+                        .requestMatchers("/api/payment/get-ByProposalId/{proposalId}").hasAnyAuthority("POLICY_HOLDER","EMPLOYEE", "ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/payment/update/{id}").hasAnyAuthority("POLICY_HOLDER","EMPLOYEE", "ADMIN")
                         .requestMatchers(HttpMethod.DELETE,"/api/payment/delete/{id}").hasAuthority("ADMIN")
 
                         // Policy Apis
                         .requestMatchers(HttpMethod.POST, "/api/policy/add/{proposalId}").hasAuthority("EMPLOYEE")
-                        .requestMatchers("/api/policy/get-one/{proposalId}").hasAnyAuthority("EMPLOYEE","ADMIN")
+                        .requestMatchers("/api/policy/get-one/{id}").hasAnyAuthority("POLICY_HOLDER","EMPLOYEE","ADMIN")
                         .requestMatchers("/api/policy/get-myPolicies").hasAuthority("POLICY_HOLDER")
+                        .requestMatchers("/api/policy/employee/get-all").hasAuthority("EMPLOYEE")
+                        .requestMatchers("/api/proposal/get-approved").hasAuthority("EMPLOYEE")
                         .requestMatchers(HttpMethod.PUT, "/api/policy/update/{id}").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.DELETE,"/api/policy/delete/{id}").hasAuthority("ADMIN")
 
                         // Claim Apis
                         .requestMatchers(HttpMethod.POST,"/api/claim/add").hasAuthority("POLICY_HOLDER")
+                        .requestMatchers("/api/claim/get-my-claims").hasAuthority("POLICY_HOLDER")
+                        .requestMatchers("/api/claim/get-by-policy/{policyId}").hasAuthority("POLICY_HOLDER")
+                        .requestMatchers("/api/claim/surveyor/pending").hasAuthority("EMPLOYEE")
+                        .requestMatchers(HttpMethod.PUT,"/api/claim/surveyor/review/{id}").hasAuthority("EMPLOYEE")
+                        .requestMatchers("/api/claim/manager/pending").hasAuthority("EMPLOYEE")
+                        .requestMatchers(HttpMethod.PUT,"/api/claim/manager/decision/{id}").hasAuthority("EMPLOYEE")
+                        .requestMatchers("/api/claim/insurance-manager/payment").hasAuthority("EMPLOYEE")
+                        .requestMatchers(HttpMethod.PUT,"/api/claim/insurance-manager/payment/{id}").hasAuthority("EMPLOYEE")
+                        .requestMatchers(HttpMethod.POST,"/api/claim/image/upload/{claimId}").hasAuthority("POLICY_HOLDER")
+                        .requestMatchers(HttpMethod.PUT,"/api/claim/assign-surveyor/{claimId}/{employeeId}").hasAuthority("ADMIN")
                         .requestMatchers("/api/claim/get-one").hasAnyAuthority("POLICY_HOLDER","ADMIN","EMPLOYEE")
-                        .requestMatchers("/api/claim/get-ByPolicyId").hasAnyAuthority("POLICY_HOLDER","ADMIN","EMPLOYEE")
                         .requestMatchers(HttpMethod.PUT, "/api/claim/update/{id}").hasAnyAuthority("EMPLOYEE","ADMIN")
                         .requestMatchers(HttpMethod.DELETE,"/api/claim/delete/{id}").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.GET,"/api/claim/get-all").hasAuthority("ADMIN")
 
 
                         // Addon apis
@@ -93,20 +127,27 @@ public class SecurityConfig {
                         // login api
                         .requestMatchers("/api/auth/login").authenticated()
 
+                        // signup for policy holder
+                        .requestMatchers(HttpMethod.POST,"/api/auth/signup").permitAll()
+
                        // admin api
                         .requestMatchers(HttpMethod.POST,"/api/auth/add/admin").denyAll() // username:admin , pw:admin@123
 
                         // Employee Apis
                         .requestMatchers(HttpMethod.POST,"/api/employee/add").hasAuthority("ADMIN") // admin will create employees
                         .requestMatchers("/api/employee/get-one/{id}").hasAuthority("ADMIN")
+                        .requestMatchers("/api/employee/get-all").hasAuthority("ADMIN")
                         .requestMatchers("/api/employee/get-byEmployeeRole/{employeeRole}").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/employee/update/{id}").hasAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE,"/api/employee/delete/{id}").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.PUT,"/api/employee/delete/{id}").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE,"/api/employee/deleteId/{id}").hasAuthority("ADMIN")
 
                         // PolicyHolder Apis
                         .requestMatchers(HttpMethod.POST,"/api/policyHolder/add").permitAll()
                         .requestMatchers("/api/policyHolder/get-one/{id}").hasAnyAuthority("EMPLOYEE","ADMIN")
                         .requestMatchers("/api/policyHolder/get-all").hasAnyAuthority("EMPLOYEE","ADMIN")
+                        .requestMatchers(HttpMethod.POST,"/api/policyHolder/request-deletion").hasAuthority("POLICY_HOLDER")
+                        .requestMatchers("/api/policyHolder/deletion-requests").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/policyHolder/update").hasAuthority("POLICY_HOLDER")
                         .requestMatchers(HttpMethod.DELETE,"/api/policyHolder/delete/{id}").hasAuthority("ADMIN")
 

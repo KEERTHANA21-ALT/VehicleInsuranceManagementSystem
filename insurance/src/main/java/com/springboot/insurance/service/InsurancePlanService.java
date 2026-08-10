@@ -69,4 +69,24 @@ public class InsurancePlanService {
         insurancePlanRepository.save(insurancePlan);
 
     }
+
+    public List<InsurancePlanResponseDto> getAll() {
+        List<InsurancePlan> list = insurancePlanRepository.findAll();
+
+        return list
+                .stream()
+                .map(InsurancePlanMapper :: convertEntityToDto)
+                .toList();
+
+
+    }
+
+    public void updateToggle(long id) {
+        InsurancePlan insurancePlan = insurancePlanRepository.findById(id)
+                .orElseThrow(()->new ResourceNotFoundException("Insurance Plan Id invalid"));
+
+        insurancePlan.setActive(!insurancePlan.isActive());
+
+        insurancePlanRepository.save(insurancePlan);
+    }
 }

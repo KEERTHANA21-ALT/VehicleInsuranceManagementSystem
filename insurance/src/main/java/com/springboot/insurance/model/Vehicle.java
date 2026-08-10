@@ -30,6 +30,9 @@ public class Vehicle {
 
     private boolean isActive = true;
 
+    // for image uploading
+    private String imageUrl;
+
     @ManyToOne
     @JoinColumn(name = "policy_holder_id", nullable = false )
     private PolicyHolder policyHolder;

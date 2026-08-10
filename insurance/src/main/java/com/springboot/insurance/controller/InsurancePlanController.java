@@ -15,6 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/insurancePlan")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:5173")
 public class InsurancePlanController {
 
     private final InsurancePlanService insurancePlanService;
@@ -34,6 +35,11 @@ public class InsurancePlanController {
         return insurancePlanService.getByPlanType(planType);
     }
 
+    @GetMapping("/get-all")
+    public List<InsurancePlanResponseDto> getAll(){
+        return insurancePlanService.getAll();
+    }
+
     @DeleteMapping("/delete/{id}")
     public void delete(@PathVariable long id){
         insurancePlanService.delete(id);
@@ -44,4 +50,11 @@ public class InsurancePlanController {
         insurancePlanService.update(id,dto);
 
     }
+
+    @PutMapping("toggle/{id}")
+    public void updateToggle(@PathVariable long id){
+        insurancePlanService.updateToggle(id);
+    }
+
+
 }

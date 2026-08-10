@@ -15,6 +15,7 @@ public class InsurancePlanMapper {
         insurancePlan.setBasePremium(dto.basePremium());
         insurancePlan.setCoverageAmount(dto.coverageAmount());
         insurancePlan.setInspectionRequired(dto.inspectionRequired());
+        insurancePlan.setDiscountPercentage(dto.discountPercentage());
 
         return insurancePlan;
     }
@@ -22,10 +23,13 @@ public class InsurancePlanMapper {
     public static InsurancePlanResponseDto convertEntityToDto(InsurancePlan insurancePlan) {
 
         InsurancePlanResponseDto insurancePlanResponseDto = new InsurancePlanResponseDto(
+                insurancePlan.getId(),
                 insurancePlan.getPlanType(),
                 insurancePlan.getBasePremium(),
                 insurancePlan.getCoverageAmount(),
-                insurancePlan.isInspectionRequired()
+                insurancePlan.getDiscountPercentage(),
+                insurancePlan.isInspectionRequired(),
+                insurancePlan.isActive()
         );
         return insurancePlanResponseDto;
     }

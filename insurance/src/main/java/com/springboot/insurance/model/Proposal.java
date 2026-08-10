@@ -29,6 +29,8 @@ public class Proposal {
 
     private boolean isActive = true;
 
+    private boolean policyCreated = false;
+
     @Enumerated(EnumType.STRING)
     private ProposalStatus proposalStatus;
 

@@ -184,7 +184,7 @@ public class EmployeeServiceTest {
     }
 
     @Test
-    public void deleteTest() {
+    public void deleteIdTest() {
 
         when(employeeRepository.findById(1L)).thenReturn(Optional.of(employee1));
 //        doNothing().when(policyHolderRepository).save(policyHolder1);
@@ -192,7 +192,7 @@ public class EmployeeServiceTest {
                 .thenReturn(employee1);
 
 
-        employeeService.delete(1L);
+        employeeService.deleteId(1L);
 
         verify(employeeRepository, times(1))
                 .save(employee1);
@@ -200,7 +200,7 @@ public class EmployeeServiceTest {
     }
 
     @Test
-    public void deleteInvalidId() {
+    public void deleteIdInvalidId() {
 
 
         when(employeeRepository.findById(5L)).thenReturn(Optional.empty());
@@ -209,7 +209,7 @@ public class EmployeeServiceTest {
 
                 Assertions.assertThrows(
                         ResourceNotFoundException.class,
-                        () ->employeeService.delete(5L)
+                        () ->employeeService.deleteId(5L)
                 ).getMessage()
         );
         verify(employeeRepository,never()).save(any());

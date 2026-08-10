@@ -15,6 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/policy")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:5173")
 public class PolicyController {
 
     private final PolicyService policyService;
@@ -24,10 +25,10 @@ public class PolicyController {
         policyService.add(proposalId,dto);
     }
 
-    @GetMapping("/get-one")
-    public PolicyResponseDto getById(Principal principal){
+    @GetMapping("/get-one/{id}")
+    public PolicyResponseDto getById(@PathVariable long id, Principal principal){
         String username = principal.getName();
-        return policyService.getById(username);
+        return policyService.getById(id,username);
     }
 
     @GetMapping("/get-myPolicies")
@@ -35,6 +36,12 @@ public class PolicyController {
         String username = principal.getName();
         return policyService.getAll(username);
     }
+    @GetMapping("/employee/get-all")
+    public List<PolicyResponseDto> getAllByEmployee(Principal principal){
+        String username = principal.getName();
+        return policyService.getAllByEmployee(username);
+    }
+
 
     @DeleteMapping("/delete/{id}")
     public void delete(@PathVariable long id){

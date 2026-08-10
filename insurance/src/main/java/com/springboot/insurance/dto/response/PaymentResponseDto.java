@@ -6,6 +6,7 @@ import com.springboot.insurance.enums.PaymentStatus;
 import java.time.Instant;
 
 public record PaymentResponseDto(
+        Long id,
         double amount,
         PaymentMethod paymentMethod,
         Instant paymentDate,

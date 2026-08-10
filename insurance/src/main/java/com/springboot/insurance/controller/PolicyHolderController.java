@@ -15,6 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/policyHolder")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:5173")
 public class PolicyHolderController {
 
     private final PolicyHolderService policyHolderService;
@@ -25,7 +26,8 @@ public class PolicyHolderController {
     }
 
     @GetMapping("/get-all")
-    public List<PolicyHolderResponseDto> getAll(@RequestParam Integer page,@RequestParam Integer size){
+    public List<PolicyHolderResponseDto> getAll(@RequestParam(required = false, defaultValue = "0") Integer page,
+                                                @RequestParam(required = false, defaultValue = "20") Integer size){
         return policyHolderService.getAll(page,size);
     }
 
@@ -48,6 +50,23 @@ public class PolicyHolderController {
 
     }
 
+    @GetMapping("/profile")
+    public PolicyHolderResponseDto policyHolderProfile(Principal principal){
+        String username = principal.getName();
+        return policyHolderService.policyHolderProfile(username);
+
+    }
+
+    @PostMapping("/request-deletion")
+    public void requestDeletion(Principal principal) {
+        String username = principal.getName();
+        policyHolderService.requestDeletion(username);
+    }
+
+    @GetMapping("/deletion-requests")
+    public List<PolicyHolderResponseDto> getDeletionRequests() {
+        return policyHolderService.getDeletionRequests();
+    }
 
 
 }

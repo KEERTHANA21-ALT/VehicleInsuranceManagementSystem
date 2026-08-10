@@ -23,6 +23,7 @@ public class AddonMapper {
     public static AddonResponseDto convertEntityToDto(Addon addon) {
 
         AddonResponseDto addonResponseDto = new AddonResponseDto(
+                addon.getId(),
                 addon.getName(),
                 addon.getPrice(),
                 addon.getDescription()

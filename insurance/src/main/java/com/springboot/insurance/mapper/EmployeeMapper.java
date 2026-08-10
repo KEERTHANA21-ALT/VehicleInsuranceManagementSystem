@@ -10,6 +10,7 @@ public class EmployeeMapper {
     public static Employee convertDtoToEntity(EmployeeRequestDto dto) {
 
         Employee employee = new Employee();
+
         employee.setName(dto.name());
         employee.setEmployeeRole(dto.employeeRole());
 
@@ -19,8 +20,11 @@ public class EmployeeMapper {
     public static EmployeeResponseDto convertEntityToDto(Employee employee) {
 
         EmployeeResponseDto responseDto = new EmployeeResponseDto(
+                employee.getId(),
                 employee.getName(),
-                employee.getEmployeeRole()
+                employee.getEmployeeRole(),
+                employee.getUser().getUsername(),
+                employee.isActive()
         );
 
         return responseDto;

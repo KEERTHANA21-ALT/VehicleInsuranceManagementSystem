@@ -28,8 +28,10 @@ public class Claim {
     @Enumerated(EnumType.STRING)
     private ClaimStatus claimStatus;
 
+
     @CreationTimestamp
     private Instant claimDate;
+
 
     @Column(nullable = false)
     private String claimReason;
@@ -37,9 +39,15 @@ public class Claim {
     @Column(nullable = false)
     private String claimRemarks;
 
+    private String imageUrl;
+
     @ManyToOne
     @JoinColumn(name = "policy_id")
     private Policy policy;
+
+    @ManyToOne
+    @JoinColumn(name = "employee_id")
+    private Employee employee;
 
 
 }

@@ -25,6 +25,8 @@ public class InsurancePlan {
 
     private double coverageAmount;
 
+    private double discountPercentage;
+
     private boolean inspectionRequired = true;
 
     private boolean isActive = true;

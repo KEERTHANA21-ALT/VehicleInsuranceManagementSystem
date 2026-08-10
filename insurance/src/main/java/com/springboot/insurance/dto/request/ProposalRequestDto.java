@@ -14,14 +14,9 @@ public record ProposalRequestDto(
         @NotNull
         Long insurancePlanId,
 
-        @Min(value = 3000, message = "Base Premium amount must be greater than or equal to 3000")
-        double basePremium,
+        List<Long> addonIds
 
-        @Min(value = 0, message = "Base Premium amount must be greater than or equal to 1000")
-        double discount,
 
-        @NotNull
-        ProposalStatus proposalStatus
 
 
 ) {

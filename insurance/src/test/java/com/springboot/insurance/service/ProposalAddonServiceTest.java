@@ -88,22 +88,7 @@ public class ProposalAddonServiceTest {
         verify(proposalRepository,times(1)).save(proposal1);
     }
 
-//    @Test
-//    public void addInvalidProposalId(){
-//
-//        when(proposalRepository.findById(10L))
-//                .thenReturn(Optional.empty());
-//
-//        Assertions.assertEquals(
-//                "Proposal Id is invalid",
-//                Assertions.assertThrows(
-//                        ResourceNotFoundException.class,
-//                        ()->proposalAddonService.add(10L,1L,"john@gmail.com")
-//                ).getMessage()
-//        );
-//
-//        verify(proposalAddonRepository,never()).save(any());
-//    }
+
 
     @Test
     public void getByIdPresent(){

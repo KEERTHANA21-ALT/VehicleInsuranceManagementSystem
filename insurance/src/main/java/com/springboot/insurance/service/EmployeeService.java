@@ -69,11 +69,19 @@ public class EmployeeService {
                 .toList();
     }
 
+    // to switch the navbar content according to the emp role
+    public Employee getByUser(User user) {
+        return employeeRepository.findByUser(user)
+                .orElseThrow(() -> new ResourceNotFoundException("Employee not found"));
+    }
+
+
     public void delete(long id) {
         Employee employee = employeeRepository.findById(id)
                 .orElseThrow(()->new ResourceNotFoundException("Employee Id invalid"));
 
-        employee.setActive(false);
+//        employee.setActive(false);
+        employee.setActive(!employee.isActive());
 
         employeeRepository.save(employee);
     }
@@ -83,11 +91,32 @@ public class EmployeeService {
         Employee employee = employeeRepository.findById(id)
                 .orElseThrow(()->new ResourceNotFoundException("Employee Id invalid"));
 
+
         employee.setName(dto.name());
         employee.setEmployeeRole(dto.employeeRole());
         employee.setActive(dto.isActive());
 
         employeeRepository.save(employee);
+
+    }
+
+
+    public List<EmployeeResponseDto> getAll() {
+        List<Employee> list = employeeRepository.findAll();
+
+        return list
+                .stream()
+                .map(EmployeeMapper :: convertEntityToDto)
+                .toList();
+    }
+
+    public void deleteId(long id) {
+        Employee employee = employeeRepository.findById(id)
+                .orElseThrow(()->new ResourceNotFoundException("Employee Id invalid"));
+
+        employee.setActive(false);
+        employeeRepository.save(employee);
+
 
     }
 }

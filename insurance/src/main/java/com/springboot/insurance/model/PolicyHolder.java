@@ -19,7 +19,7 @@ public class PolicyHolder {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String name;
 
     private LocalDate dob;
@@ -29,7 +29,9 @@ public class PolicyHolder {
 
     private String address;
 
-    private boolean isActive = true;
+    private boolean active = true;
+
+    private boolean deletionRequested = false;
 
     @OneToOne
     @JoinColumn(name = "user_id")

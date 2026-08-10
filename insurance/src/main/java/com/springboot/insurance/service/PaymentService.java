@@ -25,11 +25,10 @@ public class PaymentService {
     private final ProposalRepository proposalRepository;
 
 
-    public void add(String username, PaymentRequestDto dto) {
-
+    public PaymentResponseDto add(long proposalId, @Valid PaymentRequestDto dto) {
         // Step 1: Fetch existing proposal
-        Proposal proposal = proposalRepository.findByPolicyHolderUserUsername(username)
-                        .orElseThrow(() -> new ResourceNotFoundException("Proposal is invalid"));
+        Proposal proposal = proposalRepository.findById(proposalId)
+                .orElseThrow(() -> new ResourceNotFoundException("Proposal is invalid"));
 
         // Step 2: convert dto to Payment entity
         Payment payment = PaymentMapper.convertDtoToEntity(dto);
@@ -46,7 +45,9 @@ public class PaymentService {
         payment.setActive(true);
 
         // Step 6: Save payment
-        paymentRepository.save(payment);
+        Payment savedPayment = paymentRepository.save(payment);
+
+        return PaymentMapper.convertEntityToDto(savedPayment);
     }
 
     public PaymentResponseDto getById(String username) {
@@ -82,4 +83,6 @@ public class PaymentService {
 
         paymentRepository.save(payment);
     }
+
+
 }

@@ -15,14 +15,14 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/payment")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:5173")
 public class PaymentController {
 
     private final PaymentService paymentService;
 
-    @PostMapping("/add")
-    public void add(Principal principal, @Valid @RequestBody PaymentRequestDto dto){
-        String username = principal.getName();
-        paymentService.add( username,dto);
+    @PostMapping("/add/{proposalId}")
+    public PaymentResponseDto add(@PathVariable long proposalId, @Valid @RequestBody PaymentRequestDto dto){
+        return paymentService.add(proposalId,dto);
     }
 
     @GetMapping("/get-one")

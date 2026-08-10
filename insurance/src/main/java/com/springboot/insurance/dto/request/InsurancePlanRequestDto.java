@@ -15,6 +15,8 @@ public record InsurancePlanRequestDto(
         @Min(value = 1000, message = "Coverage Amount must be greater than 1000")
         double coverageAmount,
 
+        double discountPercentage,
+
         @NotNull
         Boolean inspectionRequired
 ) {

@@ -9,16 +9,16 @@ import java.time.LocalDate;
 
 public record ClaimRequestDto(
 
-        @Min(value = 1, message = "Claim amount must be greater than 0")
-        double claimAmount,
-
-        @NotNull
-        ClaimStatus claimStatus,
+        @NotNull(message = "Policy ID is required")
+        Long policyId,
 
         @NotBlank(message = "This field should not be empty")
         String claimReason,
 
         @NotBlank(message = "This field should not be empty")
         String claimRemarks
+
+
 ) {
+
 }

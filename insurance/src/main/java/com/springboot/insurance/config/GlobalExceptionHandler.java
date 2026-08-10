@@ -22,7 +22,6 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String,String>> handleMethodArgumentNotValidException(
             MethodArgumentNotValidException e
     ){
-        System.out.println("I am spring, and I m in handler method");
         BindingResult result =  e.getBindingResult();
         List<FieldError> list =  result.getFieldErrors();
         Map<String, String> map = new HashMap<>();
