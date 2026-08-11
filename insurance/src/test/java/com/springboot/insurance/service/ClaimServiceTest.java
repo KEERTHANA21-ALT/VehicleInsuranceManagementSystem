@@ -2,6 +2,7 @@ package com.springboot.insurance.service;
 
 import com.springboot.insurance.dto.request.ClaimRequestDto;
 import com.springboot.insurance.dto.response.ClaimResponseDto;
+import com.springboot.insurance.dto.response.UploadResponseDto;
 import com.springboot.insurance.enums.ClaimStatus;
 import com.springboot.insurance.exception.ResourceNotFoundException;
 import com.springboot.insurance.model.Claim;
@@ -21,6 +22,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockMultipartFile;
 
 import java.time.Instant;
 import java.util.List;
@@ -349,4 +351,53 @@ public class ClaimServiceTest {
         Assertions.assertEquals(0, claimService.getAll().size());
         verify(claimRepository, times(1)).findAll();
     }
+
+
+    @Test
+    public void uploadImageTest() throws Exception {
+
+        when(claimRepository.findById(1L)).thenReturn(Optional.of(claim1));
+
+        MockMultipartFile imageFile = new MockMultipartFile(
+                "image",
+                "claim.jpg",
+                "image/jpeg",
+                "test image".getBytes()
+        );
+
+        when(claimRepository.save(any(Claim.class))).thenReturn(claim1);
+
+        UploadResponseDto response = claimService.uploadImage(1L, imageFile);
+
+        Assertions.assertEquals(1L, response.id());
+        Assertions.assertEquals("claim.jpg", response.fileName());
+        Assertions.assertEquals("File upload success", response.message());
+
+        Assertions.assertNotNull(claim1.getImageUrl());
+
+        verify(claimRepository, times(1)).findById(1L);
+        verify(uploadUtility, times(1)).validateImage(imageFile);
+        verify(claimRepository, times(1)).save(claim1);
+    }
+
+
+    @Test
+    public void uploadImageInvalidClaim() throws Exception {
+
+        when(claimRepository.findById(10L)).thenReturn(Optional.empty());
+
+        Assertions.assertEquals(
+                "Claim Id invalid",
+                Assertions.assertThrows(
+                        ResourceNotFoundException.class,
+                        () -> claimService.uploadImage(10L, null)
+                ).getMessage()
+        );
+
+        verify(claimRepository, times(1)).findById(10L);
+        verify(uploadUtility, never()).validateImage(any());
+    }
+
+
+
 }
