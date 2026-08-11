@@ -1,6 +1,7 @@
 package com.springboot.insurance.service;
 
 import com.springboot.insurance.dto.request.VehicleRequestDto;
+import com.springboot.insurance.dto.response.UploadResponseDto;
 import com.springboot.insurance.enums.Role;
 import com.springboot.insurance.enums.VehicleType;
 import com.springboot.insurance.exception.ResourceNotFoundException;
@@ -14,6 +15,11 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockMultipartFile;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 import static org.mockito.Mockito.*;
@@ -207,6 +213,7 @@ public class VehicleServiceTest {
 
     @Test
     public void getByIdAbsent() {
+
         when(vehicleRepository.findById(10L)).thenReturn(Optional.empty());
 
         ResourceNotFoundException exception = Assertions.assertThrows(ResourceNotFoundException.class,
@@ -214,6 +221,93 @@ public class VehicleServiceTest {
 
         Assertions.assertEquals("Vehicle id not valid", exception.getMessage());
         verify(vehicleRepository).findById(10L);
+    }
+
+
+
+    @Test
+    public void uploadImageTest() throws Exception {
+
+        when(vehicleRepository.findById(1L)).thenReturn(Optional.of(vehicle1));
+        when(vehicleRepository.save(vehicle1)).thenReturn(vehicle1);
+
+        MockMultipartFile imageFile = new MockMultipartFile(
+                "imageFile",
+                "vehicle.jpg",
+                "image/jpeg",
+                "test image".getBytes()
+        );
+
+        doNothing().when(uploadUtility).validateImage(imageFile);
+
+        UploadResponseDto response = vehicleService.uploadImage(1L, imageFile);
+
+        Assertions.assertEquals(1L, response.id());
+        Assertions.assertEquals("vehicle.jpg", response.fileName());
+        Assertions.assertEquals("File upload success", response.message());
+        Assertions.assertNotNull(response.path());
+
+        Assertions.assertEquals(
+                response.path(),
+                vehicle1.getImageUrl()
+        );
+
+        verify(vehicleRepository).findById(1L);
+        verify(uploadUtility).validateImage(imageFile);
+        verify(vehicleRepository).save(vehicle1);
+
+        Path uploadedFile = Paths.get(response.path());
+
+        Files.deleteIfExists(uploadedFile);
+    }
+
+    @Test
+    public void uploadImageInvalidVehicle() throws Exception {
+
+        when(vehicleRepository.findById(10L)).thenReturn(Optional.empty());
+
+        MockMultipartFile imageFile = new MockMultipartFile(
+                "imageFile",
+                "vehicle.jpg",
+                "image/jpeg",
+                "test image".getBytes()
+        );
+
+        ResourceNotFoundException exception = Assertions.assertThrows(ResourceNotFoundException.class,
+                        () -> vehicleService.uploadImage(10L, imageFile)
+                );
+
+        Assertions.assertEquals(
+                "Product not found",
+                exception.getMessage()
+        );
+
+        verify(vehicleRepository).findById(10L);
+        verify(uploadUtility, never()).validateImage(any());
+        verify(vehicleRepository, never()).save(any());
+    }
+
+    @Test
+    public void uploadImageValidationFailed() throws Exception {
+
+        when(vehicleRepository.findById(1L)).thenReturn(Optional.of(vehicle1));
+
+        MockMultipartFile imageFile = new MockMultipartFile(
+                "imageFile",
+                "vehicle.txt",
+                "text/plain",
+                "test file".getBytes()
+        );
+
+        doThrow(new IllegalArgumentException("Invalid image")).when(uploadUtility).validateImage(imageFile);
+
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> vehicleService.uploadImage(1L, imageFile)
+        );
+
+        verify(vehicleRepository).findById(1L);
+        verify(uploadUtility).validateImage(imageFile);
+        verify(vehicleRepository, never()).save(any());
     }
 }
 
