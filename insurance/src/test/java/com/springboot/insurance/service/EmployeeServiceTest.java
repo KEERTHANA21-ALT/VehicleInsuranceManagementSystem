@@ -120,11 +120,9 @@ public class EmployeeServiceTest {
 
         employeeService.add(dto);
 
-        ArgumentCaptor<Employee> employeeCaptor =
-                ArgumentCaptor.forClass(Employee.class);
+        ArgumentCaptor<Employee> employeeCaptor = ArgumentCaptor.forClass(Employee.class);
 
-        verify(employeeRepository, times(1))
-                .save(employeeCaptor.capture());
+        verify(employeeRepository, times(1)).save(employeeCaptor.capture());
 
         Assertions.assertEquals(
                 dto.name(),
@@ -157,16 +155,14 @@ public class EmployeeServiceTest {
     @Test
     public void getByIdPresent() {
 
-        when(employeeRepository.fetchById(1L))
-                .thenReturn(Optional.of(employee1));
+        when(employeeRepository.fetchById(1L)).thenReturn(Optional.of(employee1));
 
         Assertions.assertEquals(
                 "John Doe",
                 employeeService.getById(1L).name()
         );
 
-        verify(employeeRepository, times(1))
-                .fetchById(1L);
+        verify(employeeRepository, times(1)).fetchById(1L);
 
     }
 
@@ -174,8 +170,7 @@ public class EmployeeServiceTest {
     @Test
     public void getByIdAbsent() {
 
-        when(employeeRepository.fetchById(10L))
-                .thenReturn(Optional.empty());
+        when(employeeRepository.fetchById(10L)).thenReturn(Optional.empty());
 
         Assertions.assertEquals(
                 "Employee id invalid",
@@ -185,8 +180,7 @@ public class EmployeeServiceTest {
                 ).getMessage()
         );
 
-        verify(employeeRepository, times(1))
-                .fetchById(10L);
+        verify(employeeRepository, times(1)).fetchById(10L);
 
     }
 
@@ -194,12 +188,9 @@ public class EmployeeServiceTest {
     @Test
     public void getByEmployeeRoleTest() {
 
-        List<Employee> employeeList =
-                List.of(employee1, employee2);
+        List<Employee> employeeList = List.of(employee1, employee2);
 
-        when(employeeRepository.getByEmployeeRole(
-                EmployeeRole.CLAIM_MANAGER
-        )).thenReturn(employeeList);
+        when(employeeRepository.getByEmployeeRole(EmployeeRole.CLAIM_MANAGER)).thenReturn(employeeList);
 
         Assertions.assertEquals(
                 2,
@@ -208,8 +199,7 @@ public class EmployeeServiceTest {
                         .size()
         );
 
-        verify(employeeRepository, times(1))
-                .getByEmployeeRole(EmployeeRole.CLAIM_MANAGER);
+        verify(employeeRepository, times(1)).getByEmployeeRole(EmployeeRole.CLAIM_MANAGER);
 
     }
 
@@ -217,16 +207,14 @@ public class EmployeeServiceTest {
     @Test
     public void getByUserTest() {
 
-        when(employeeRepository.findByUser(user1))
-                .thenReturn(Optional.of(employee1));
+        when(employeeRepository.findByUser(user1)).thenReturn(Optional.of(employee1));
 
         Assertions.assertEquals(
                 employee1,
                 employeeService.getByUser(user1)
         );
 
-        verify(employeeRepository, times(1))
-                .findByUser(user1);
+        verify(employeeRepository, times(1)).findByUser(user1);
 
     }
 
@@ -234,8 +222,7 @@ public class EmployeeServiceTest {
     @Test
     public void getByUserInvalidTest() {
 
-        when(employeeRepository.findByUser(user1))
-                .thenReturn(Optional.empty());
+        when(employeeRepository.findByUser(user1)).thenReturn(Optional.empty());
 
         Assertions.assertEquals(
                 "Employee not found",
@@ -245,8 +232,7 @@ public class EmployeeServiceTest {
                 ).getMessage()
         );
 
-        verify(employeeRepository, times(1))
-                .findByUser(user1);
+        verify(employeeRepository, times(1)).findByUser(user1);
 
     }
 
@@ -256,21 +242,17 @@ public class EmployeeServiceTest {
 
         employee1.setActive(true);
 
-        when(employeeRepository.findById(1L))
-                .thenReturn(Optional.of(employee1));
+        when(employeeRepository.findById(1L)).thenReturn(Optional.of(employee1));
 
-        when(employeeRepository.save(employee1))
-                .thenReturn(employee1);
+        when(employeeRepository.save(employee1)).thenReturn(employee1);
 
         employeeService.delete(1L);
 
         Assertions.assertFalse(employee1.isActive());
 
-        verify(employeeRepository, times(1))
-                .findById(1L);
+        verify(employeeRepository, times(1)).findById(1L);
 
-        verify(employeeRepository, times(1))
-                .save(employee1);
+        verify(employeeRepository, times(1)).save(employee1);
 
     }
 
@@ -280,21 +262,17 @@ public class EmployeeServiceTest {
 
         employee1.setActive(false);
 
-        when(employeeRepository.findById(1L))
-                .thenReturn(Optional.of(employee1));
+        when(employeeRepository.findById(1L)).thenReturn(Optional.of(employee1));
 
-        when(employeeRepository.save(employee1))
-                .thenReturn(employee1);
+        when(employeeRepository.save(employee1)).thenReturn(employee1);
 
         employeeService.delete(1L);
 
         Assertions.assertTrue(employee1.isActive());
 
-        verify(employeeRepository, times(1))
-                .findById(1L);
+        verify(employeeRepository, times(1)).findById(1L);
 
-        verify(employeeRepository, times(1))
-                .save(employee1);
+        verify(employeeRepository, times(1)).save(employee1);
 
     }
 
@@ -302,8 +280,7 @@ public class EmployeeServiceTest {
     @Test
     public void deleteInvalidIdTest() {
 
-        when(employeeRepository.findById(5L))
-                .thenReturn(Optional.empty());
+        when(employeeRepository.findById(5L)).thenReturn(Optional.empty());
 
         Assertions.assertEquals(
                 "Employee Id invalid",
@@ -313,11 +290,9 @@ public class EmployeeServiceTest {
                 ).getMessage()
         );
 
-        verify(employeeRepository, times(1))
-                .findById(5L);
+        verify(employeeRepository, times(1)).findById(5L);
 
-        verify(employeeRepository, never())
-                .save(any());
+        verify(employeeRepository, never()).save(any());
 
     }
 
@@ -325,16 +300,13 @@ public class EmployeeServiceTest {
     @Test
     public void deleteIdTest() {
 
-        when(employeeRepository.findById(1L))
-                .thenReturn(Optional.of(employee1));
+        when(employeeRepository.findById(1L)).thenReturn(Optional.of(employee1));
 
-        when(employeeRepository.save(employee1))
-                .thenReturn(employee1);
+        when(employeeRepository.save(employee1)).thenReturn(employee1);
 
         employeeService.deleteId(1L);
 
-        verify(employeeRepository, times(1))
-                .save(employee1);
+        verify(employeeRepository, times(1)).save(employee1);
 
     }
 

@@ -65,54 +65,35 @@ public class AddonServiceTest {
 
         addonService.add(dto);
 
-        ArgumentCaptor<Addon> captor =
-                ArgumentCaptor.forClass(Addon.class);
+        ArgumentCaptor<Addon> captor = ArgumentCaptor.forClass(Addon.class);
 
-        verify(addonRepository, times(1))
-                .save(captor.capture());
+        verify(addonRepository, times(1)).save(captor.capture());
 
-        Assertions.assertEquals(
-                dto.name(),
-                captor.getValue().getName()
-        );
-
-        Assertions.assertEquals(
-                dto.price(),
-                captor.getValue().getPrice()
-        );
-
-        Assertions.assertEquals(
-                dto.description(),
-                captor.getValue().getDescription()
-        );
-
-        Assertions.assertTrue(
-                captor.getValue().isActive()
-        );
+        Assertions.assertEquals(dto.name(), captor.getValue().getName());
+        Assertions.assertEquals(dto.price(), captor.getValue().getPrice());
+        Assertions.assertEquals(dto.description(), captor.getValue().getDescription());
+        Assertions.assertTrue(captor.getValue().isActive());
     }
 
 
     @Test
     public void getByIdPresent() {
 
-        when(addonRepository.findById(1L))
-                .thenReturn(Optional.of(addon1));
+        when(addonRepository.findById(1L)).thenReturn(Optional.of(addon1));
 
         Assertions.assertEquals(
                 "ZERO_DEPRECIATION",
                 addonService.getById(1L).name()
         );
 
-        verify(addonRepository, times(1))
-                .findById(1L);
+        verify(addonRepository, times(1)).findById(1L);
     }
 
 
     @Test
     public void getByIdAbsent() {
 
-        when(addonRepository.findById(10L))
-                .thenReturn(Optional.empty());
+        when(addonRepository.findById(10L)).thenReturn(Optional.empty());
 
         Assertions.assertEquals(
                 "Addon id Invalid",
@@ -122,8 +103,7 @@ public class AddonServiceTest {
                 ).getMessage()
         );
 
-        verify(addonRepository, times(1))
-                .findById(10L);
+        verify(addonRepository, times(1)).findById(10L);
     }
 
 
@@ -135,21 +115,16 @@ public class AddonServiceTest {
 
         Pageable pageable = PageRequest.of(page, size);
 
-        Page<Addon> pageAddon =
-                new PageImpl<>(List.of(addon1, addon2));
+        Page<Addon> pageAddon = new PageImpl<>(List.of(addon1, addon2));
 
-        when(addonRepository.findAll(pageable))
-                .thenReturn(pageAddon);
+        when(addonRepository.findAll(pageable)).thenReturn(pageAddon);
 
         size = 1;
-
         Pageable pageable1 = PageRequest.of(page, size);
 
-        pageAddon =
-                new PageImpl<>(List.of(addon1));
+        pageAddon = new PageImpl<>(List.of(addon1));
 
-        when(addonRepository.findAll(pageable1))
-                .thenReturn(pageAddon);
+        when(addonRepository.findAll(pageable1)).thenReturn(pageAddon);
 
         Assertions.assertEquals(
                 2,
@@ -161,16 +136,10 @@ public class AddonServiceTest {
                 addonService.getAll(0, 1).size()
         );
 
-        Assertions.assertThrows(
-                RuntimeException.class,
-                () -> addonService.getAll(0, 0)
-        );
+        Assertions.assertThrows(RuntimeException.class, () -> addonService.getAll(0, 0));
 
-        verify(addonRepository, times(1))
-                .findAll(pageable);
-
-        verify(addonRepository, times(1))
-                .findAll(pageable1);
+        verify(addonRepository, times(1)).findAll(pageable);
+        verify(addonRepository, times(1)).findAll(pageable1);
     }
 
 
@@ -180,22 +149,18 @@ public class AddonServiceTest {
         int page = 0;
         int size = 2;
 
-        Pageable pageable =
-                PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page, size);
 
-        Page<Addon> pageAddon =
-                new PageImpl<>(List.of());
+        Page<Addon> pageAddon = new PageImpl<>(List.of());
 
-        when(addonRepository.findAll(pageable))
-                .thenReturn(pageAddon);
+        when(addonRepository.findAll(pageable)).thenReturn(pageAddon);
 
         Assertions.assertEquals(
                 0,
                 addonService.getAll(0, 2).size()
         );
 
-        verify(addonRepository, times(1))
-                .findAll(pageable);
+        verify(addonRepository, times(1)).findAll(pageable);
     }
 
 
@@ -204,31 +169,23 @@ public class AddonServiceTest {
 
         addon1.setActive(true);
 
-        when(addonRepository.findById(1L))
-                .thenReturn(Optional.of(addon1));
-
-        when(addonRepository.save(addon1))
-                .thenReturn(addon1);
+        when(addonRepository.findById(1L)).thenReturn(Optional.of(addon1));
+        when(addonRepository.save(addon1)).thenReturn(addon1);
 
         addonService.delete(1L);
 
-        Assertions.assertFalse(
-                addon1.isActive()
-        );
+        Assertions.assertFalse(addon1.isActive());
 
-        verify(addonRepository, times(1))
-                .findById(1L);
+        verify(addonRepository, times(1)).findById(1L);
 
-        verify(addonRepository, times(1))
-                .save(addon1);
+        verify(addonRepository, times(1)).save(addon1);
     }
 
 
     @Test
     public void deleteInvalidId() {
 
-        when(addonRepository.findById(10L))
-                .thenReturn(Optional.empty());
+        when(addonRepository.findById(10L)).thenReturn(Optional.empty());
 
         Assertions.assertEquals(
                 "Addon Id invalid",
@@ -238,16 +195,14 @@ public class AddonServiceTest {
                 ).getMessage()
         );
 
-        verify(addonRepository, never())
-                .save(any());
+        verify(addonRepository, never()).save(any());
     }
 
 
     @Test
     public void updateTest() {
 
-        when(addonRepository.findById(1L))
-                .thenReturn(Optional.of(addon1));
+        when(addonRepository.findById(1L)).thenReturn(Optional.of(addon1));
 
         AddonRequestDto dto = new AddonRequestDto(
                 "ROADSIDE_ASSISTANCE",
@@ -272,19 +227,15 @@ public class AddonServiceTest {
                 addon1.getDescription()
         );
 
-        verify(addonRepository, times(1))
-                .findById(1L);
-
-        verify(addonRepository, times(1))
-                .save(addon1);
+        verify(addonRepository, times(1)).findById(1L);
+        verify(addonRepository, times(1)).save(addon1);
     }
 
 
     @Test
     public void updateInvalidId() {
 
-        when(addonRepository.findById(10L))
-                .thenReturn(Optional.empty());
+        when(addonRepository.findById(10L)).thenReturn(Optional.empty());
 
         AddonRequestDto dto = new AddonRequestDto(
                 "ROADSIDE_ASSISTANCE",
@@ -300,11 +251,9 @@ public class AddonServiceTest {
                 ).getMessage()
         );
 
-        verify(addonRepository, times(1))
-                .findById(10L);
+        verify(addonRepository, times(1)).findById(10L);
 
-        verify(addonRepository, times(0))
-                .save(addon1);
+        verify(addonRepository, times(0)).save(addon1);
     }
 
 }
